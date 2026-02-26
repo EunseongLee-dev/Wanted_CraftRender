@@ -23,18 +23,20 @@ namespace Craft
 		~GraphicsContext();
 
 		// 초기화
-		void Initialize(
-			uint32_t width,
-			uint32_t height,
-			const Win32Window& window
-		);
+		void Initialize(const Win32Window& window);
+
+	private:
+		// 장치 생성
+		void CreateDevice();
+		void CreateSwapChain(const Win32Window& window);
+		void CreateViewport(const Win32Window& window);
 
 	private:
 		// 장치류
 		// Direct3D 리소스는 포인터로만 다룰 수 있음
 		// 생성/해제를 API에 요청
-		ID3D11Device* device = nullptr;
-		ID3D11DeviceContext* context = nullptr;
+		ID3D11Device* device = nullptr; // 리소스 생성
+		ID3D11DeviceContext* context = nullptr; // GPU 파이프라인에 설정
 		IDXGISwapChain* swapChain = nullptr;
 
 		// 뷰포트

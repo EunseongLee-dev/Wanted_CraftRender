@@ -1,5 +1,6 @@
 #include "GraphicsContext.h"
-#include "../Core/Win32Window.h"
+#include "Core/Win32Window.h"
+#include "Core/Common.h"
 
 namespace Craft
 {
@@ -10,30 +11,31 @@ namespace Craft
 	GraphicsContext::~GraphicsContext()
 	{
 		// 자원 해제
-		if (device)
-		{
-			// Release 함수를 통해서 자원 해제
-			device->Release();
-			device = nullptr;
-		}
-
-		// 자원 해제
-		if (context)
-		{
-			context->Release();
-			context = nullptr;
-		}
-
-		// 자원 해제
-		if (swapChain)
-		{
-			swapChain->Release();
-			swapChain = nullptr;
-		}
+		SafeRelease(device);
+		SafeRelease(context);
+		SafeRelease(swapChain);
 	}
 	
-	void GraphicsContext::Initialize(
-		uint32_t width, uint32_t height, const Win32Window& window)
+	void GraphicsContext::Initialize(const Win32Window& window)
+	{
+		// 멤버 변수 설정
+		width = window.Width();
+		height = window.Height();
+
+		// 장치 생성
+		CreateDevice();
+
+		
+
+		// SwapChain 생성
+		CreateSwapChain(window);
+		
+		// 뷰포트 생성
+		CreateViewport(window);
+		
+	}
+
+	void GraphicsContext::CreateDevice()
 	{
 		// 플래그 지정
 		uint32_t flag = 0;
@@ -54,10 +56,10 @@ namespace Craft
 		// Device / DeviceContext 생성
 		/*
 		IDXGIAdapter* pAdapter,
-	    D3D_DRIVER_TYPE DriverType,
-        HMODULE Software,
-        UINT Flags,
-        D3D_FEATURE_LEVEL* pFeatureLevels,
+		D3D_DRIVER_TYPE DriverType,
+		HMODULE Software,
+		UINT Flags,
+		D3D_FEATURE_LEVEL* pFeatureLevels,
 		UINT FeatureLevels,
 		UINT SDKVersion,
 		ID3D11Device** ppDevice,
@@ -67,15 +69,15 @@ namespace Craft
 
 		// 오류인 경우 음수값 반환됨
 		HRESULT result = D3D11CreateDevice(
-			nullptr, 
+			nullptr,
 			D3D_DRIVER_TYPE_HARDWARE,
-			nullptr, 
+			nullptr,
 			flag,
-			featureLevels, 
+			featureLevels,
 			_countof(featureLevels),
-			D3D11_SDK_VERSION, 
+			D3D11_SDK_VERSION,
 			&device,
-			nullptr, 
+			nullptr,
 			&context
 		);
 
@@ -85,11 +87,13 @@ namespace Craft
 			__debugbreak;
 			return;
 		}
+	}
 
-		// SwapChain 생성
+	void GraphicsContext::CreateSwapChain(const Win32Window& window)
+	{
 		// 스왑체인 생성해주는 객체 얻어오기
 		IDXGIFactory* factory = nullptr;
-		result = CreateDXGIFactory(
+		HRESULT result = CreateDXGIFactory(
 			__uuidof(IDXGIFactory),
 			reinterpret_cast<void**>(&factory)
 		);
@@ -113,21 +117,21 @@ namespace Craft
 			UINT Flags;
 		*/
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-		
+
 		// 창 모드로 시작
-		swapChainDesc.Windowed = true; 
+		swapChainDesc.Windowed = true;
 		swapChainDesc.OutputWindow = window.Handle();
-		
+
 		// 화면 출력용
-		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; 
-		
+		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+
 		// 사용할 버퍼 수
-		swapChainDesc.BufferCount = 2; 
-		
+		swapChainDesc.BufferCount = 2;
+
 		// 안티-앨리어싱(Anti-Aliasing)에 수퍼샘플링 수준 설정
 		swapChainDesc.SampleDesc.Count = 1;
 		swapChainDesc.SampleDesc.Quality = 0;
-		
+
 		// 버퍼(프레임-이미지) 설정
 		swapChainDesc.BufferDesc.Width = window.Width();
 		swapChainDesc.BufferDesc.Height = window.Height();
@@ -153,13 +157,11 @@ namespace Craft
 		}
 
 		// 팩토리 객체 해제
-		if (factory)
-		{
-			factory->Release();
-			factory = nullptr;
-		}
+		SafeRelease(factory);
+	}
 
-		// 뷰포트 생성
+	void GraphicsContext::CreateViewport(const Win32Window& window)
+	{
 		viewport.TopLeftX = 0.0f;
 		viewport.TopLeftY = 0.0f;
 		viewport.Width = static_cast<float>(window.Width());
