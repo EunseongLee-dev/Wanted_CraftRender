@@ -3,13 +3,13 @@
 namespace Craft
 {
 	Win32Window::Win32Window(
-		uint32_t width,
-		uint32_t height,
+		uint32_t width, 
+		uint32_t height, 
 		const std::wstring& title,
-		HINSTANCE instance,
+		HINSTANCE instance, 
 		WNDPROC messageProcedure)
 		: width(width), height(height), title(title),
-		instance(instance),
+		instance(instance), 
 		messageProcedure(messageProcedure)
 	{
 	}
@@ -19,7 +19,7 @@ namespace Craft
 		// 창 등록 해제.
 		UnregisterClass(className.c_str(), instance);
 	}
-
+	
 	bool Win32Window::Initialize()
 	{
 		// 창 생성에 필요한 정보(구조체) 채우기.

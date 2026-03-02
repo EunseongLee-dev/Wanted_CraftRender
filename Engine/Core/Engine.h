@@ -6,11 +6,11 @@
 
 namespace Craft
 {
-	// 전방선언
+	// 전방선언.
 	class Win32Window;
 	class GraphicsContext;
 
-	// 엔진 설정
+	// 엔진 설정.
 	struct EngineSetting
 	{
 		uint32_t width = 1280;
@@ -26,30 +26,29 @@ namespace Craft
 		Engine();
 		virtual ~Engine();
 
-		// 초기화 함수
+		// 초기화 함수.
 		bool Initialize(HINSTANCE instance);
 
-		// 엔진 루프 실행 함수
+		// 엔진 루프 실행 함수.
 		void Run();
 
 	protected:
-		// Win32 윈도우 메시지 처리 함수(콜백 함수)
+		// Win32 윈도우 메시지 처리 함수(콜백 함수).
 		static LRESULT CALLBACK Win32MessageProcedure(
-			HWND handle,
-			UINT message,
-			WPARAM wparam,
-			LPARAM lparam);
+			HWND handle, 
+			UINT message, 
+			WPARAM wparam, 
+			LPARAM lparam
+		);
 
 	protected:
-		// 창 객체
+		// 창 객체.
 		std::unique_ptr<Win32Window> window;
 
-		// 그래픽스 컨텍스트 객체 (장치 관리 등등)
+		// 그래픽스 컨텍스트 객체 (장치 관리 등등).
 		std::unique_ptr<GraphicsContext> graphicsContext;
 
-		// 엔진 설정 변수
+		// 엔진 설정 변수.
 		EngineSetting setting;
 	};
 }
-
-

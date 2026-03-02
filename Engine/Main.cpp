@@ -2,7 +2,7 @@
 
 using namespace Craft;
 
-// 엔진 실행 함수
+// 엔진 실행 함수.
 void LaunchEngineStartup(HINSTANCE instance)
 {
 	Engine engine;
@@ -20,12 +20,14 @@ int main()
 //    _In_ HINSTANCE hInstance,
 //    _In_opt_ HINSTANCE hPrevInstance,
 //    _In_ LPSTR lpCmdLine,
-//    _In_ int nShowCmd
-//)
+//    _In_ int nShowCmd)
 //{
 //    LaunchEngineStartup(hInstance);
 //    return 0;
 //}
 //#else
-//
+//int main()
+//{
+//	LaunchEngineStartup(GetModuleHandle(nullptr));
+//}
 //#endif
